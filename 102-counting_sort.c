@@ -1,67 +1,55 @@
+#include "sort.h"
+#include <stdio.h>
+/**
+ *_calloc - this is a calloc function
+ *@nmemb: number of elemets
+ *@size: bit size of each element
+ *Return: pointer to memory assignement
+ */
 #include <stdio.h>
 #include <stdlib.h>
-#include "sort.h"
 
-/**
- * get_max - Get the maximum value in an array of integers.
- * @array: An array of integers.
- * @size: The size of the array.
- *
- * Return: The maximum integer in the array.
- */
-int get_max(int *array, int size)
-{
-int max, i;
-for (max = array[0], i = 1; i < size; i++)
-{
-if (array[i] > max)
-max = array[i];
+void counting_sort(int *array, size_t size) {
+    int max = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (array[i] > max) {
+            max = array[i];
+        }
+    }
+    int *count = (int *) malloc((max + 1) * sizeof(int));
+    if (count == NULL) {
+        printf("Error: Failed to allocate memory for count array\n");
+        return;
+    }
+    for (int i = 0; i <= max; i++) {
+        count[i] = 0;
+    }
+    for (size_t i = 0; i < size; i++) {
+        count[array[i]]++;
+    }
+    printf("Count array: ");
+    for (int i = 0; i <= max; i++) {
+        printf("%d ", count[i]);
+    }
+    printf("\n");
+    int index = 0;
+    for (int i = 0; i <= max; i++) {
+        for (int j = 0; j < count[i]; j++) {
+            array[index] = i;
+            index++;
+        }
+    }
+    free(count);
 }
 
-return (max);
-}
-
-/**
- * counting_sort - Sorts an array of integers in ascending order
- *                 using the Counting sort algorithm.
- * @array: The array of integers to sort.
- * @size: The size of the array.
- */
-void counting_sort(int *array, size_t size)
-{
-int *count, *sorted, max, i;
-
-if (array == NULL || size < 2)
-return;
-
-sorted = malloc(sizeof(int) * size);
-if (sorted == NULL)
-return;
-max = get_max(array, size);
-count = malloc(sizeof(int) * (max + 1));
-if (count == NULL)
-{
-free(sorted);
-return;
-}
-
-for (i = 0; i < (max + 1); i++)
-count[i] = 0;
-for (i = 0; i < (int)size; i++)
-count[array[i]] += 1;
-for (i = 0; i < (max + 1); i++)
-count[i] += count[i - 1];
-print_array(count, max + 1);
-
-for (i = 0; i < (int)size; i++)
-{
-sorted[count[array[i]] - 1] = array[i];
-count[array[i]] -= 1;
-}
-
-for (i = 0; i < (int)size; i++)
-array[i] = sorted[i];
-
-free(sorted);
-free(count);
+int main() {
+    int arr[] = {5, 2, 4, 6, 1, 3};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    counting_sort(arr, size);
+    printf("Sorted array: ");
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    return 0;
 }
